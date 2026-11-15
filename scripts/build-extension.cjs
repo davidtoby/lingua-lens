@@ -9,7 +9,7 @@ const { execFileSync } = require('child_process');
 const root = path.resolve(__dirname, '..');
 const srcDir = path.join(root, 'public/extension');
 const manifest = JSON.parse(fs.readFileSync(path.join(srcDir, 'manifest.json'), 'utf8'));
-const zipName = `tobytranslate-youtube-bilingual-v${manifest.version}.zip`;
+const zipName = `lingualens-v${manifest.version}.zip`;
 const outFile = path.join(root, 'public', zipName);
 
 if (fs.existsSync(outFile)) fs.unlinkSync(outFile);

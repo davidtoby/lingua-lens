@@ -1,12 +1,14 @@
 const DEFAULT_SETTINGS = {
   enabled: true,
   autoTranslate: true,
+  pageAutoTranslate: false,
   targetLang: 'zh-CN',
   backendUrl: 'http://localhost:5050',
   showOriginal: true,
   hideNativeCaptions: true,
   fontSize: 20,
   position: 12,
+  overlayPos: null,
   sourcePreference: 'auto',
 };
 
@@ -42,6 +44,8 @@ const el = {
   showOriginal: document.getElementById('showOriginal'),
   hideNativeCaptions: document.getElementById('hideNativeCaptions'),
   autoTranslate: document.getElementById('autoTranslate'),
+  pageAutoTranslate: document.getElementById('pageAutoTranslate'),
+  resetPosBtn: document.getElementById('resetPosBtn'),
   enabled: document.getElementById('enabled'),
   saveBtn: document.getElementById('saveBtn'),
   resetBtn: document.getElementById('resetBtn'),
@@ -74,6 +78,7 @@ function applySettings(settings) {
   el.showOriginal.checked = Boolean(settings.showOriginal);
   el.hideNativeCaptions.checked = Boolean(settings.hideNativeCaptions);
   el.autoTranslate.checked = Boolean(settings.autoTranslate);
+  el.pageAutoTranslate.checked = Boolean(settings.pageAutoTranslate);
   el.enabled.checked = Boolean(settings.enabled);
 }
 
@@ -96,6 +101,7 @@ function currentSettings() {
     showOriginal: el.showOriginal.checked,
     hideNativeCaptions: el.hideNativeCaptions.checked,
     autoTranslate: el.autoTranslate.checked,
+    pageAutoTranslate: el.pageAutoTranslate.checked,
     enabled: el.enabled.checked,
   };
 }
@@ -157,6 +163,14 @@ async function reset() {
   }, 2200);
   checkBackend();
 }
+
+el.resetPosBtn.addEventListener('click', async () => {
+  await chrome.storage.sync.set({ overlayPos: null });
+  el.saveTip.textContent = '字幕位置已复位';
+  setTimeout(() => {
+    el.saveTip.textContent = '';
+  }, 2200);
+});
 
 el.saveBtn.addEventListener('click', save);
 el.resetBtn.addEventListener('click', reset);

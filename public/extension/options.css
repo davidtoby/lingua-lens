@@ -226,3 +226,8 @@ kbd {
   color: var(--ok);
   font-size: 12px;
 }
+
+.btn.small {
+  padding: 8px 12px;
+  font-size: 13px;
+}

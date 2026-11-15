@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <title>TobyTranslate 双语字幕</title>
+    <title>LinguaLens · 双语字幕与整页翻译</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
@@ -10,8 +10,8 @@
       <div class="brand">
         <span class="logo">译</span>
         <div class="brand-text">
-          <strong>TobyTranslate</strong>
-          <span>YouTube 双语字幕</span>
+          <strong>LinguaLens</strong>
+          <span>双语字幕 · 整页翻译</span>
         </div>
       </div>
       <a id="openOptions" class="link" href="#">设置</a>
@@ -72,6 +72,19 @@
           <button id="importBtn" class="btn ghost" type="button">导入本地字幕文件</button>
           <span class="import-hint">抓不到字幕时，可导入 SRT / VTT 后照样双语翻译与导出。</span>
         </div>
+      </section>
+
+      <section class="card" id="pageCard">
+        <div class="card-title">整页翻译</div>
+        <div class="status-line">
+          <span class="dot" id="pageDot"></span>
+          <span id="pageStatus">可在任意网页把正文逐段翻成双语</span>
+        </div>
+        <div class="page-actions">
+          <button id="pageTranslateBtn" class="btn ghost" type="button">翻译本页</button>
+          <button id="pageRestoreBtn" class="btn ghost" type="button">恢复原文</button>
+        </div>
+        <p class="hint">快捷键 <kbd>Alt</kbd> + <kbd>A</kbd>：整页翻译 / 还原；译文以浅色块插在原文下方。</p>
       </section>
 
       <section class="card server">

@@ -12,6 +12,8 @@ const DEFAULT_SETTINGS = {
   hideNativeCaptions: true,
   fontSize: 20,
   position: 12,
+  overlayPos: null,
+  pageAutoTranslate: false,
   sourcePreference: 'auto',
 };
 

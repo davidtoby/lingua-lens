@@ -98,7 +98,7 @@
   pointer-events: none;
 }
 
-.html5-video-player:hover .ytbt-toolbar,
+.ytbt-overlay.ytbt-toolbar-open .ytbt-toolbar,
 .ytbt-toolbar:focus-within {
   opacity: 1;
   transform: translateY(0);
@@ -126,6 +126,23 @@
 .ytbt-btn:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.ytbt-btn-drag {
+  cursor: grab;
+  padding: 5px 6px;
+  letter-spacing: -1px;
+  touch-action: none;
+}
+
+.ytbt-overlay.ytbt-dragging .ytbt-btn-drag {
+  cursor: grabbing;
+  background: #0a84ff;
+  color: #fff;
+}
+
+.ytbt-overlay.ytbt-dragging {
+  transition: none;
 }
 
 .ytbt-btn-toggle {

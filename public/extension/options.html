@@ -59,6 +59,10 @@
             <input id="position" type="number" min="4" max="40" step="1" />
           </div>
           <div class="field">
+            <label for="positionReset">字幕位置</label>
+            <button id="resetPosBtn" class="btn ghost small" type="button">复位到默认位置</button>
+          </div>
+          <div class="field">
             <label for="sourcePreference">字幕源偏好</label>
             <select id="sourcePreference">
               <option value="auto">自动（优先人工字幕）</option>
@@ -73,6 +77,15 @@
         <label class="check"><input id="hideNativeCaptions" type="checkbox" /> 显示双语字幕时隐藏 YouTube 原生字幕</label>
         <label class="check"><input id="autoTranslate" type="checkbox" /> 进入视频后自动开始翻译</label>
         <label class="check"><input id="enabled" type="checkbox" /> 默认开启双语字幕</label>
+        <p class="hint">字幕框可以按住工具栏最左侧的 <strong>⠿</strong> 抓手拖动到任意位置，双击抓手复位；拖动后的位置会自动记住。</p>
+      </section>
+
+      <section class="card">
+        <h2>整页翻译</h2>
+        <label class="check"><input id="pageAutoTranslate" type="checkbox" /> 打开网页后自动整页翻译（谨慎开启）</label>
+        <p class="hint">
+          在任意网页按 <kbd>Alt</kbd> + <kbd>A</kbd> 或点击弹窗「翻译本页」，即可把正文逐段翻成双语；译文以浅色块插在原文下方，点「恢复原文」可完全还原。
+        </p>
       </section>
 
       <section class="card">

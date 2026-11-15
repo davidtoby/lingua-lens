@@ -91,6 +91,7 @@ Desktop.ini
 *.tar
 # 扩展安装包属于发布产物，保留进仓库
 !public/tobytranslate-*.zip
+!public/lingualens-*.zip
 
 # TypeScript
 *.tsbuildinfo

@@ -16,9 +16,9 @@ import {
 import ServicePanel from '@/components/landing/service-panel';
 
 export const metadata: Metadata = {
-  title: 'TobyTranslate · YouTube 双语字幕插件',
+  title: 'LinguaLens · 双语字幕与整页翻译插件',
   description:
-    'Chrome 扩展 + 本地翻译服务：自动翻译 YouTube 视频字幕，双语对照显示，一键下载双语 SRT / VTT 字幕。',
+    'Chrome 扩展 + 本地翻译服务：自动翻译 YouTube 视频字幕、字幕框可拖动、一键下载双语 SRT / VTT，还能把任意网页整页翻成双语。',
 };
 
 type ExtensionMeta = {
@@ -34,10 +34,10 @@ function readMeta(): ExtensionMeta {
     return JSON.parse(raw) as ExtensionMeta;
   } catch {
     return {
-      name: 'TobyTranslate · YouTube 双语字幕',
-      version: '1.0.0',
-      file: 'tobytranslate-youtube-bilingual-v1.0.0.zip',
-      sizeLabel: '30 KB',
+      name: 'LinguaLens · 双语字幕与整页翻译',
+      version: '2.0.0',
+      file: 'lingualens-v2.0.0.zip',
+      sizeLabel: '41 KB',
     };
   }
 }
@@ -57,6 +57,16 @@ const features = [
     icon: Download,
     title: '双语字幕下载',
     desc: '一键导出 SRT / VTT，支持双语对照、仅译文、仅原文三种模式，方便做笔记和二次剪辑。',
+  },
+  {
+    icon: Layers,
+    title: '字幕框自由拖动',
+    desc: '按住字幕工具栏最左侧的抓手，就能把字幕框拖到画面上任意位置，双击复位，位置自动记住。',
+  },
+  {
+    icon: Sparkles,
+    title: '整页双语翻译',
+    desc: '任意网页按 Alt + A，正文逐段翻成双语，译文以浅色块插在原文下方，一键还原原文。',
   },
   {
     icon: Gauge,
@@ -96,6 +106,10 @@ const faqs = [
   {
     q: '需要自己准备 API Key 吗？',
     a: '不需要。翻译请求全部走本地服务端，模型 Token 由服务端内置，扩展本身不接触任何密钥。',
+  },
+  {
+    q: '整页翻译要授权「读取所有网站」吗？',
+    a: '需要。整页翻译要在任意网页注入脚本并读取正文，Chrome 会提示「读取和更改您在所有网站上的数据」。所有译文都由你本地的服务端生成，扩展不会把页面内容发往第三方。',
   },
   {
     q: '可以在 Edge / Brave 上用吗？',
@@ -144,16 +158,16 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-[11px] text-muted-foreground">
                 <Sparkles className="h-3 w-3 text-primary" />
-                Chrome 扩展 + 本地翻译服务 · 已联调
+                Chrome 扩展 + 本地翻译服务 · v2 已联调
               </div>
               <h1 className="mt-5 text-3xl font-bold leading-[1.25] tracking-tight sm:text-4xl lg:text-[42px]">
-                让每个 YouTube 视频
+                YouTube 双语字幕
                 <br />
-                都有<span className="bg-gradient-to-r from-[#0a84ff] to-[#5b5bd6] bg-clip-text text-transparent">双语字幕</span>
+                与<span className="bg-gradient-to-r from-[#0a84ff] to-[#5b5bd6] bg-clip-text text-transparent">整页双语翻译</span>
               </h1>
               <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-[15px]">
-                自动抓取视频字幕轨，调用内置大模型逐句翻译，译文与原文同屏对照；看完还能一键导出双语
-                SRT / VTT 字幕文件。对标沉浸式翻译 Pro / Max 的字幕能力，本地运行，不需要第三方 API Key。
+                自动抓取视频字幕轨，调用内置大模型逐句翻译，译文与原文同屏对照，字幕框可以拖到画面任意位置；
+                看完一键导出双语 SRT / VTT。v2 还能把任意网页整页翻成双语。本地运行，不需要第三方 API Key。
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <a
@@ -172,7 +186,7 @@ export default function Home() {
                 </a>
               </div>
               <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
-                {['Manifest V3', 'SRT / VTT 双语导出', '字幕结果本地缓存', '内置模型无需 Key'].map((item) => (
+                {['Manifest V3', '字幕可拖动', '整页翻译', 'SRT / VTT 双语导出', '内置模型无需 Key'].map((item) => (
                   <span key={item} className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                     {item}

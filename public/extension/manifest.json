@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TobyTranslate · YouTube 双语字幕",
-  "version": "1.0.0",
-  "description": "自动翻译 YouTube 视频字幕，双语对照显示，一键下载双语 SRT / VTT 字幕文件。",
+  "name": "LinguaLens · 双语字幕与整页翻译",
+  "version": "2.0.0",
+  "description": "YouTube 双语字幕、双语字幕下载，以及任意网页的整页双语翻译。字幕框可自由拖动。",
   "minimum_chrome_version": "116",
   "permissions": [
     "storage",
@@ -15,7 +15,9 @@
     "https://youtu.be/*",
     "http://localhost/*",
     "http://127.0.0.1/*",
-    "https://*.coze.site/*"
+    "https://*.coze.site/*",
+    "http://*/*",
+    "https://*/*"
   ],
   "background": {
     "service_worker": "background.js",
@@ -45,6 +47,20 @@
       ],
       "css": [
         "content.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "page.js"
+      ],
+      "css": [
+        "page.css"
       ],
       "run_at": "document_idle",
       "all_frames": false

@@ -1,0 +1,25 @@
+/* LinguaLens · 整页双语翻译样式（尽量少侵入宿主页面） */
+.ll-tr {
+  display: block;
+  margin: 2px 0 6px;
+  padding: 0;
+  color: inherit;
+  opacity: 0.86;
+  border-left: 2px solid rgba(10, 132, 255, 0.55);
+  padding-left: 8px;
+  text-align: inherit;
+  white-space: normal;
+  word-break: break-word;
+  unicode-bidi: isolate;
+}
+
+li > .ll-tr,
+td > .ll-tr,
+th > .ll-tr,
+dd > .ll-tr,
+dt > .ll-tr {
+  margin-top: 4px;
+  padding-left: 6px;
+  font-size: 0.94em;
+  opacity: 0.82;
+}

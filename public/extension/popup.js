@@ -47,6 +47,10 @@ const el = {
   checkServer: document.getElementById('checkServer'),
   importBtn: document.getElementById('importBtn'),
   importFile: document.getElementById('importFile'),
+  pageDot: document.getElementById('pageDot'),
+  pageStatus: document.getElementById('pageStatus'),
+  pageTranslateBtn: document.getElementById('pageTranslateBtn'),
+  pageRestoreBtn: document.getElementById('pageRestoreBtn'),
   openOptions: document.getElementById('openOptions'),
 };
 
@@ -167,6 +171,32 @@ async function checkServer() {
   }
 }
 
+async function loadPageStatus() {
+  if (!activeTabId) return;
+  try {
+    const result = await sendToTab('PAGE_STATUS');
+    const data = (result && result.data) || {};
+    if (data.translating) {
+      setDot(el.pageDot, 'warn');
+      el.pageStatus.textContent = `翻译中 ${data.done}/${data.total || '…'}`;
+    } else if (data.enabled) {
+      setDot(el.pageDot, 'ok');
+      el.pageStatus.textContent = `已翻译 ${data.translatedNodes || data.done} 段，点「恢复原文」可还原`;
+    } else if (data.error) {
+      setDot(el.pageDot, 'err');
+      el.pageStatus.textContent = data.error;
+    } else {
+      setDot(el.pageDot, 'warn');
+      el.pageStatus.textContent = '可在任意网页把正文逐段翻成双语';
+    }
+    el.pageRestoreBtn.disabled = !data.enabled && !data.translating;
+  } catch (error) {
+    setDot(el.pageDot, 'err');
+    el.pageStatus.textContent = '当前页面不支持整页翻译（如 chrome:// 页面）';
+    el.pageRestoreBtn.disabled = true;
+  }
+}
+
 async function init() {
   const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   fillLanguages(settings.targetLang || 'zh-CN');
@@ -178,7 +208,9 @@ async function init() {
   activeIsYouTube = Boolean(tab && tab.url && /^https:\/\/(www\.|m\.)?youtube\.com\//.test(tab.url));
 
   await loadStatus();
+  loadPageStatus();
   checkServer();
+  setInterval(loadPageStatus, 2000);
 
   el.enabled.addEventListener('change', async () => {
     await chrome.storage.sync.set({ enabled: el.enabled.checked });
@@ -213,6 +245,29 @@ async function init() {
   });
 
   el.checkServer.addEventListener('click', checkServer);
+
+  el.pageTranslateBtn.addEventListener('click', async () => {
+    el.pageTranslateBtn.disabled = true;
+    try {
+      await sendToTab('PAGE_TRANSLATE');
+      el.pageStatus.textContent = '已开始翻译，译文会逐段出现…';
+      setTimeout(loadPageStatus, 800);
+    } catch (error) {
+      setDot(el.pageDot, 'err');
+      el.pageStatus.textContent = `无法翻译：${error.message}`;
+    } finally {
+      el.pageTranslateBtn.disabled = false;
+    }
+  });
+
+  el.pageRestoreBtn.addEventListener('click', async () => {
+    try {
+      await sendToTab('PAGE_RESTORE');
+      await loadPageStatus();
+    } catch (error) {
+      el.pageStatus.textContent = `还原失败：${error.message}`;
+    }
+  });
 
   el.importBtn.addEventListener('click', () => el.importFile.click());
 

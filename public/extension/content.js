@@ -12,6 +12,7 @@
     hideNativeCaptions: true,
     fontSize: 20,
     position: 12,
+    overlayPos: null,
     sourcePreference: 'auto',
   };
 
@@ -486,6 +487,17 @@
     const toolbar = document.createElement('div');
     toolbar.className = 'ytbt-toolbar';
 
+    const dragHandle = document.createElement('button');
+    dragHandle.type = 'button';
+    dragHandle.className = 'ytbt-btn ytbt-btn-drag';
+    dragHandle.textContent = '⠿';
+    dragHandle.title = '按住拖动可移动字幕位置，双击复位';
+    dragHandle.addEventListener('pointerdown', startOverlayDrag);
+    dragHandle.addEventListener('dblclick', (event) => {
+      event.stopPropagation();
+      resetOverlayPosition();
+    });
+
     const toggleBtn = document.createElement('button');
     toggleBtn.type = 'button';
     toggleBtn.className = 'ytbt-btn ytbt-btn-toggle';
@@ -518,6 +530,7 @@
       }, 2200);
     });
 
+    toolbar.appendChild(dragHandle);
     toolbar.appendChild(toggleBtn);
     toolbar.appendChild(downloadBtn);
 
@@ -545,15 +558,105 @@
     state.originalEl = original;
     state.statusEl = status;
 
+    // 播放器容器名在不同页面/不同地区并不一致，用鼠标进出播放器来控制工具栏显隐
+    player.addEventListener('mouseenter', () => overlay.classList.add('ytbt-toolbar-open'));
+    player.addEventListener('mouseleave', () => overlay.classList.remove('ytbt-toolbar-open'));
+
     applyStyleSettings();
     renderStatus();
     return overlay;
   }
 
+  /** 应用字幕浮层位置：有拖动坐标就用坐标，否则回到默认底部位置 */
+  function applyOverlayPosition() {
+    const overlay = state.overlay;
+    if (!overlay) return;
+    const pos = state.settings.overlayPos;
+    const hasPos = pos && typeof pos.xPct === 'number' && typeof pos.yPct === 'number';
+    if (hasPos) {
+      overlay.style.bottom = 'auto';
+      overlay.style.left = `${pos.xPct}%`;
+      overlay.style.top = `${pos.yPct}%`;
+      overlay.style.transform = 'translate(-50%, -50%)';
+    } else {
+      overlay.style.top = '';
+      overlay.style.left = '50%';
+      overlay.style.bottom = `${state.settings.position ?? 12}%`;
+      overlay.style.transform = 'translateX(-50%)';
+    }
+  }
+
+  function saveOverlayPosition(pos) {
+    state.settings.overlayPos = pos;
+    applyOverlayPosition();
+    try {
+      chrome.storage.sync.set({ overlayPos: pos });
+    } catch (error) {
+      log('保存字幕位置失败', error);
+    }
+  }
+
+  /** 按住抓手拖动字幕框，坐标按播放器宽高换算成百分比，跟着窗口变化也不跑偏 */
+  function startOverlayDrag(event) {
+    const overlay = state.overlay;
+    const player = getPlayer();
+    if (!overlay || !player) return;
+    if (event.button !== undefined && event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const playerRect = player.getBoundingClientRect();
+    const rect = overlay.getBoundingClientRect();
+    const center = {
+      x: rect.left + rect.width / 2 - playerRect.left,
+      y: rect.top + rect.height / 2 - playerRect.top,
+    };
+    const start = { x: event.clientX, y: event.clientY };
+    const halfWidth = rect.width / 2;
+    const halfHeight = rect.height / 2;
+    overlay.classList.add('ytbt-dragging');
+
+    const onMove = (moveEvent) => {
+      const nextX = center.x + (moveEvent.clientX - start.x);
+      const nextY = center.y + (moveEvent.clientY - start.y);
+      const minX = Math.min(halfWidth * 0.4, playerRect.width / 2);
+      const maxX = Math.max(playerRect.width - minX, minX);
+      const minY = Math.min(halfHeight * 0.6, playerRect.height / 2);
+      const maxY = Math.max(playerRect.height - minY, minY);
+      const clampedX = Math.min(Math.max(nextX, minX), maxX);
+      const clampedY = Math.min(Math.max(nextY, minY), maxY);
+      state.settings.overlayPos = {
+        xPct: Number(((clampedX / playerRect.width) * 100).toFixed(2)),
+        yPct: Number(((clampedY / playerRect.height) * 100).toFixed(2)),
+      };
+      applyOverlayPosition();
+    };
+
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove, true);
+      window.removeEventListener('pointerup', onUp, true);
+      window.removeEventListener('pointercancel', onUp, true);
+      overlay.classList.remove('ytbt-dragging');
+      if (state.settings.overlayPos) {
+        saveOverlayPosition(state.settings.overlayPos);
+        showToast('位置已记住，双击抓手可复位');
+      }
+    };
+
+    window.addEventListener('pointermove', onMove, true);
+    window.addEventListener('pointerup', onUp, true);
+    window.addEventListener('pointercancel', onUp, true);
+  }
+
+  function resetOverlayPosition() {
+    saveOverlayPosition(null);
+    showToast('字幕位置已复位到底部');
+  }
+
   function applyStyleSettings() {
     if (!state.overlay) return;
     state.overlay.style.setProperty('--ytbt-font-size', `${state.settings.fontSize || 20}px`);
-    state.overlay.style.bottom = `${state.settings.position ?? 12}%`;
+    applyOverlayPosition();
     state.overlay.classList.toggle('ytbt-hide-original', !state.settings.showOriginal);
     state.overlay.classList.toggle('ytbt-enabled', state.enabled);
     const toggle = state.overlay.querySelector('.ytbt-btn-toggle');

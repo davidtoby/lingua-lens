@@ -334,3 +334,13 @@ kbd {
   line-height: 1.4;
   flex: 1 1 140px;
 }
+
+.page-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.page-actions .btn {
+  flex: 1 1 0;
+}

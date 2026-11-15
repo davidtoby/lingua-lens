@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>How Attention Works — Example Article</title>
+    <style>
+      body { font-family: -apple-system, system-ui, sans-serif; max-width: 760px; margin: 40px auto; line-height: 1.7; }
+      h1 { font-size: 30px; }
+      table { border-collapse: collapse; width: 100%; }
+      td, th { border: 1px solid #ddd; padding: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>How Attention Works</h1>
+    <p>The transformer architecture replaced recurrence with attention, letting every token look at every other token in a single step.</p>
+    <p>Attention scores are computed from queries and keys, and the resulting weights are used to blend the values.</p>
+    <h2>Why it matters</h2>
+    <ul>
+      <li>Training can be parallelised across the whole sequence.</li>
+      <li>Long-range dependencies are captured without vanishing gradients.</li>
+      <li>Scaling the model keeps improving quality.</li>
+    </ul>
+    <h2>Comparison</h2>
+    <table>
+      <tr><th>Architecture</th><th>Parallel training</th></tr>
+      <tr><td>Recurrent network</td><td>Not possible</td></tr>
+      <tr><td>Transformer</td><td>Fully parallel</td></tr>
+    </table>
+    <blockquote>Attention is all you need.</blockquote>
+  </body>
+</html>
