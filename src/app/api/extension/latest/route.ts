@@ -6,7 +6,7 @@ import { jsonWithCors, preflight } from '@/lib/cors';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const FALLBACK_ORIGIN = 'https://5tjjyhbf89.coze.site';
+const FALLBACK_ORIGIN = 'https://lingualens.coze.site';
 
 function resolveOrigin(request: Request) {
   const headers = request.headers;

@@ -14,7 +14,7 @@ export async function GET() {
   return jsonWithCors({
     ok: true,
     service: 'youtube-bilingual-subtitle-translator',
-    version: '2.1.0',
+    version: '2.1.1',
     model: TRANSLATE_MODEL,
     languages: SUPPORTED_LANGUAGES,
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),

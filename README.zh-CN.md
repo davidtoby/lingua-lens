@@ -54,7 +54,7 @@ YouTube 从 2025 年起加强了 `timedtext` 校验（PoToken + 来源判定）�
 
 ### 1. 直接用线上服务（默认）
 
-不用装任何后端：扩展默认连接 `https://5tjjyhbf89.coze.site`，加载后即可在任意网络使用。
+不用装任何后端：扩展默认连接 `https://lingualens.coze.site`，加载后即可在任意网络使用。
 
 ### 1b. 或者自己跑一个服务端
 
@@ -76,14 +76,14 @@ curl -s -X POST http://localhost:5050/api/translate \
 
 ### 2. 安装扩展
 
-1. 把 `public/lingualens-v2.1.0.zip` 解压到固定目录（别放临时目录）。
+1. 把 `public/lingualens-v2.1.1.zip` 解压到固定目录（别放临时目录）。
 2. 打开 `chrome://extensions`，开启「开发者模式」。
 3. 点「加载已解压的扩展程序」，选中解压后的目录（目录里直接能看到 `manifest.json`）。
 4. 打开任意 YouTube 视频，播放器上出现字幕浮层即成功。
 
 Chrome 会提示「读取和更改您在所有网站上的数据」——这是整页翻译必需的权限；所有译文都由你自己的服务端生成，扩展不会把页面内容发往第三方。
 
-扩展默认连线上服务 `https://5tjjyhbf89.coze.site`；想接自己的服务，就在选项页把地址改成 `http://localhost:5050` 并点「测试连接」。
+扩展默认连线上服务 `https://lingualens.coze.site`；想接自己的服务，就在选项页把地址改成 `http://localhost:5050` 并点「测试连接」。
 
 ## 在线更新
 
@@ -97,7 +97,7 @@ Chrome 会提示「读取和更改您在所有网站上的数据」——这是�
 
 - **`.crx` 安装 / 企业策略分发** —— Chrome 会按 `updates.xml` 静默升级。
 - **解压加载（unpacked）** —— Chrome 不会自动更新解压扩展，用「检查更新」拿到新包后重新加载即可。
-- **Chrome 应用商店** —— 普通用户静默更新的唯一正规路径；`public/lingualens-v2.1.0.zip` 已满足上架要求（MV3、无远程代码、无 `default_locale`）。
+- **Chrome 应用商店** —— 普通用户静默更新的唯一正规路径；`public/lingualens-v2.1.1.zip` 已满足上架要求（MV3、无远程代码、无 `default_locale`）。
 
 服务端侧改动（模型、提示词、限流）不需要更新客户端，跟着后端发布即可。
 

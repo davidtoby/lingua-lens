@@ -30,7 +30,7 @@ type ExtensionMeta = {
   notes?: string[];
 };
 
-const SERVICE_BASE = 'https://5tjjyhbf89.coze.site';
+const SERVICE_BASE = 'https://lingualens.coze.site';
 
 function readMeta(): ExtensionMeta {
   try {
@@ -39,8 +39,8 @@ function readMeta(): ExtensionMeta {
   } catch {
     return {
       name: 'LinguaLens · 双语字幕与整页翻译',
-      version: '2.1.0',
-      file: 'lingualens-v2.1.0.zip',
+      version: '2.1.1',
+      file: 'lingualens-v2.1.1.zip',
       sizeLabel: '43 KB',
     };
   }
@@ -417,14 +417,14 @@ export default function Home() {
               </div>
               <pre className="mt-4 overflow-x-auto rounded-xl bg-[#0b0d12] px-4 py-3 text-[11px] leading-6 text-white/80">
 {`# 线上服务（扩展默认连接）
-https://5tjjyhbf89.coze.site
+https://lingualens.coze.site
 
 # 健康检查
-curl -s https://5tjjyhbf89.coze.site/api/health
+curl -s https://lingualens.coze.site/api/health
 
 # 版本发现 / 更新清单
-curl -s https://5tjjyhbf89.coze.site/api/extension/latest
-curl -s https://5tjjyhbf89.coze.site/updates.xml`}
+curl -s https://lingualens.coze.site/api/extension/latest
+curl -s https://lingualens.coze.site/updates.xml`}
               </pre>
               <p className="mt-3 text-xs leading-6 text-muted-foreground">
                 线上发布新版本后，插件弹窗「版本与更新」会提示并给出一键获取入口；用 <code className="rounded bg-muted px-1">.crx</code> 安装的扩展还会按

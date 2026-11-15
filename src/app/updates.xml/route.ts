@@ -4,7 +4,7 @@ import path from 'node:path';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const FALLBACK_ORIGIN = 'https://5tjjyhbf89.coze.site';
+const FALLBACK_ORIGIN = 'https://lingualens.coze.site';
 
 /** 由 .keys/lingualens.pem 公钥推导，固定不变；换私钥才会变。 */
 const EXTENSION_ID = 'megljaakikpaegbfnfdkphmpkapdonec';

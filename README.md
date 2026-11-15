@@ -2,7 +2,7 @@
 
 **A bilingual lens for the web.** A Chrome extension + hosted translation backend that turns YouTube videos into bilingual subtitles, exports bilingual SRT/VTT, and translates whole web pages in place.
 
-- **Hosted backend:** https://5tjjyhbf89.coze.site — install the extension and it just works, no local server, no API key.
+- **Hosted backend:** https://lingualens.coze.site — install the extension and it just works, no local server, no API key.
 - **Self-hostable:** the same Next.js backend runs locally (`bash ./scripts/dev.sh`).
 - **Online updates:** the extension checks the backend for a newer release and links straight to the update.
 
@@ -57,7 +57,7 @@ If all four fail, the overlay says so and you can import a local subtitle file i
 
 ### 1. Use the hosted backend (default)
 
-Nothing to install. The extension ships with `https://5tjjyhbf89.coze.site` as its default backend, so it works on any network right after loading.
+Nothing to install. The extension ships with `https://lingualens.coze.site` as its default backend, so it works on any network right after loading.
 
 ### 1b. Or run your own backend
 
@@ -79,7 +79,7 @@ curl -s -X POST http://localhost:5050/api/translate \
 
 ### 2. Install the extension
 
-1. Unzip `public/lingualens-v2.1.0.zip` into a permanent folder.
+1. Unzip `public/lingualens-v2.1.1.zip` into a permanent folder.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and pick the unzipped folder (it must contain `manifest.json`).
 4. Open any YouTube video — the subtitle overlay appears on the player.
@@ -98,7 +98,7 @@ How far the automation goes depends on how the extension was installed:
 
 - **`.crx` install / enterprise policy** — Chrome polls `updates.xml` and upgrades silently.
 - **Unpacked install** — Chrome never auto-updates unpacked extensions; use **检查更新**, then reload the new folder.
-- **Chrome Web Store** — the only way to get silent updates for ordinary users. The `public/lingualens-v2.1.0.zip` is store-ready (MV3, no remote code, no `default_locale`).
+- **Chrome Web Store** — the only way to get silent updates for ordinary users. The `public/lingualens-v2.1.1.zip` is store-ready (MV3, no remote code, no `default_locale`).
 
 Server-side changes (model, prompt, rate limits) need no client update at all — they ship with the backend.
 

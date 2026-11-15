@@ -3,7 +3,7 @@ const DEFAULT_SETTINGS = {
   autoTranslate: true,
   pageAutoTranslate: false,
   targetLang: 'zh-CN',
-  backendUrl: 'https://5tjjyhbf89.coze.site',
+  backendUrl: 'https://lingualens.coze.site',
   showOriginal: true,
   hideNativeCaptions: true,
   fontSize: 20,
