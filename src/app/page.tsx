@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import {
   ArrowRight,
   Captions,
@@ -451,7 +452,15 @@ curl -s https://lingualens.coze.site/updates.xml`}
       <footer className="border-t border-border/60 py-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-5 text-xs text-muted-foreground sm:flex-row">
           <span>LinguaLens · 双语字幕与整页翻译 · v{meta.version}</span>
-          <span>扩展端纯前端运行，翻译服务由云端后端提供</span>
+          <span className="flex items-center gap-4">
+            <Link className="hover:text-foreground" href="/privacy">
+              隐私政策
+            </Link>
+            <a className="hover:text-foreground" href="https://github.com/davidtoby/lingua-lens">
+              GitHub
+            </a>
+            <span>翻译服务由云端后端提供</span>
+          </span>
         </div>
       </footer>
     </div>

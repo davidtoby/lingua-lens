@@ -101,6 +101,16 @@ Chrome 会提示「读取和更改您在所有网站上的数据」——这是�
 
 服务端侧改动（模型、提示词、限流）不需要更新客户端，跟着后端发布即可。
 
+### Chrome 应用商店上架包
+
+上架所需材料都在 [`store/`](store/README.md)：中英文商店文案、权限理由、隐私政策、5 张 1280×800 截图和宣传图。
+
+```bash
+node scripts/build-store-package.cjs   # 生成 store/lingualens-v2.1.1-store.zip（自动去掉 update_url）
+```
+
+隐私政策（线上）：<https://lingualens.coze.site/privacy>
+
 ## 使用
 
 | 操作 | 方式 |

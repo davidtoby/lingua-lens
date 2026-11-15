@@ -102,6 +102,16 @@ How far the automation goes depends on how the extension was installed:
 
 Server-side changes (model, prompt, rate limits) need no client update at all — they ship with the backend.
 
+### Chrome Web Store package
+
+Everything needed to publish is in [`store/`](store/README.md): listing copy (zh/en), permission justifications, privacy policy, five 1280×800 screenshots and the promo tiles.
+
+```bash
+node scripts/build-store-package.cjs   # -> store/lingualens-v2.1.1-store.zip (update_url stripped)
+```
+
+Privacy policy (live): <https://lingualens.coze.site/privacy>
+
 ## Usage
 
 | Action | How |

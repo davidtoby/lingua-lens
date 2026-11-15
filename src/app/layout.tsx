@@ -3,34 +3,30 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'TobyTranslate · YouTube 双语字幕插件',
+    default: 'LinguaLens · 双语字幕与整页翻译',
     template: '%s',
   },
   description:
-    'Chrome 扩展 + 本地翻译服务：自动翻译 YouTube 视频字幕，双语对照显示，一键下载双语 SRT / VTT 字幕。',
+    'Chrome 扩展 + 云端翻译服务：自动翻译 YouTube 视频字幕、字幕框可拖动、一键下载双语 SRT / VTT，任意网页可整页翻成双语。安装即用。',
   keywords: [
-    '扣子编程',
-    'Coze Code',
-    'Vibe Coding',
-    'AI 编程',
-    '智能体搭建',
-    '工作流搭建',
-    '网站搭建',
-    '网站部署',
-    '全栈开发',
-    'AI 工程师',
+    'YouTube 双语字幕',
+    '双语字幕下载',
+    '沉浸式翻译替代',
+    '整页翻译',
+    '网页翻译扩展',
+    'Chrome 翻译插件',
+    'LinguaLens',
   ],
-  authors: [{ name: 'Coze Code Team', url: 'https://code.coze.cn' }],
-  generator: 'Coze Code',
+  authors: [{ name: 'LinguaLens', url: 'https://lingualens.coze.site' }],
   // icons: {
   //   icon: '',
   // },
   openGraph: {
-    title: '扣子编程 | 你的 AI 工程师已就位',
+    title: 'LinguaLens · 双语字幕与整页翻译',
     description:
-      '我正在使用扣子编程 Vibe Coding，让创意瞬间上线。告别拖拽，拥抱心流。',
-    url: 'https://code.coze.cn',
-    siteName: '扣子编程',
+      '自动翻译 YouTube 字幕、字幕框可拖动、一键导出双语 SRT / VTT，任意网页整页双语翻译。',
+    url: 'https://lingualens.coze.site',
+    siteName: 'LinguaLens',
     locale: 'zh_CN',
     type: 'website',
     // images: [
