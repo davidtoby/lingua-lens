@@ -1,0 +1,172 @@
+/* TobyTranslate · YouTube 双语字幕浮层样式 */
+.ytbt-overlay {
+  --ytbt-font-size: 20px;
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%);
+  width: min(92%, 1080px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 60;
+  pointer-events: none;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+}
+
+.ytbt-caption {
+  max-width: 100%;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgba(8, 10, 16, 0.62);
+  backdrop-filter: blur(2px);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  line-height: 1.35;
+}
+
+.ytbt-caption.ytbt-caption-visible {
+  opacity: 1;
+}
+
+.ytbt-translated {
+  color: #ffffff;
+  font-size: var(--ytbt-font-size);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ytbt-original {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: calc(var(--ytbt-font-size) * 0.76);
+  font-weight: 400;
+  margin-top: 2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ytbt-caption.ytbt-no-translation .ytbt-translated {
+  display: none;
+}
+
+.ytbt-hide-original .ytbt-original {
+  display: none;
+}
+
+/* 关闭时完全隐藏字幕文本，只留工具栏 */
+.ytbt-overlay:not(.ytbt-enabled) .ytbt-caption {
+  display: none;
+}
+
+.ytbt-status {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(10, 132, 255, 0.88);
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.ytbt-status.ytbt-status-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ytbt-toolbar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 10px;
+  background: rgba(12, 14, 20, 0.82);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+}
+
+.html5-video-player:hover .ytbt-toolbar,
+.ytbt-toolbar:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.ytbt-btn {
+  appearance: none;
+  border: 0;
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #e8eaef;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ytbt-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.ytbt-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.ytbt-btn-toggle {
+  width: 26px;
+  padding: 5px 0;
+  font-weight: 700;
+}
+
+.ytbt-btn-toggle.ytbt-active {
+  background: #0a84ff;
+  color: #fff;
+}
+
+.ytbt-toast {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 6px);
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: rgba(12, 14, 20, 0.92);
+  color: #fff;
+  font-size: 12px;
+  max-width: 90%;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.ytbt-toast.ytbt-toast-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* 打开双语字幕后隐藏 YouTube 原生字幕，避免叠字 */
+.ytbt-hide-native .ytp-caption-window-container {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 全屏时略微上移，避开进度条 */
+.html5-video-player.ytp-fullscreen .ytbt-overlay {
+  bottom: 14%;
+}

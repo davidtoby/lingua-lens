@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>TobyTranslate 双语字幕</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="brand">
+        <span class="logo">译</span>
+        <div class="brand-text">
+          <strong>TobyTranslate</strong>
+          <span>YouTube 双语字幕</span>
+        </div>
+      </div>
+      <a id="openOptions" class="link" href="#">设置</a>
+    </header>
+
+    <main class="main">
+      <section class="card">
+        <div class="row">
+          <div class="row-label">
+            <span>自动翻译字幕</span>
+            <small>进入视频后自动拉取字幕并翻译</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="enabledToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="row">
+          <div class="row-label">
+            <span>目标语言</span>
+            <small>译文字幕显示语言</small>
+          </div>
+          <select id="targetLang" class="select"></select>
+        </div>
+      </section>
+
+      <section class="card" id="videoCard">
+        <div class="card-title">当前视频</div>
+        <div class="video-title" id="videoTitle">未检测到 YouTube 视频</div>
+        <div class="status-line">
+          <span class="dot" id="statusDot"></span>
+          <span id="statusText">—</span>
+        </div>
+        <div class="progress" id="progressWrap" hidden>
+          <div class="progress-bar"><span id="progressBar"></span></div>
+          <span id="progressText">0/0</span>
+        </div>
+        <div class="meta" id="videoMeta"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-title">下载字幕</div>
+        <div class="download-row">
+          <select id="downloadMode" class="select">
+            <option value="bilingual">双语对照</option>
+            <option value="target">仅译文</option>
+            <option value="source">仅原文</option>
+          </select>
+          <select id="downloadFormat" class="select">
+            <option value="srt">SRT</option>
+            <option value="vtt">VTT</option>
+          </select>
+        </div>
+        <button id="downloadBtn" class="btn primary" type="button">下载字幕文件</button>
+        <p class="hint" id="downloadHint">双语字幕会按「译文 + 原文」两行写入同一时间轴。</p>
+        <div class="import-row">
+          <input id="importFile" type="file" accept=".srt,.vtt,.json,text/plain" hidden />
+          <button id="importBtn" class="btn ghost" type="button">导入本地字幕文件</button>
+          <span class="import-hint">抓不到字幕时，可导入 SRT / VTT 后照样双语翻译与导出。</span>
+        </div>
+      </section>
+
+      <section class="card server">
+        <div class="card-title">翻译服务</div>
+        <div class="server-line">
+          <span class="dot" id="serverDot"></span>
+          <span id="serverText">检测中…</span>
+        </div>
+        <div class="server-url" id="serverUrl"></div>
+        <button id="checkServer" class="btn ghost" type="button">重新检测</button>
+      </section>
+
+      <p class="shortcut">快捷键：<kbd>Alt</kbd> + <kbd>T</kbd> 开关字幕 · <kbd>Alt</kbd> + <kbd>D</kbd> 下载双语字幕</p>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

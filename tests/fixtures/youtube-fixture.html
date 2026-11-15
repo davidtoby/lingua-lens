@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Attention Explained - YouTube</title>
+    <style>
+      body { margin: 0; background: #0f0f0f; color: #fff; font-family: system-ui, sans-serif; }
+      #movie_player { position: relative; width: 100vw; height: 70vh; background: #000; }
+      video { width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <div id="movie_player">
+      <video muted playsinline></video>
+    </div>
+    <div style="padding: 24px">
+      <h1>Attention Explained</h1>
+      <p>fixture page for extension e2e test</p>
+    </div>
+    <script>
+      window.ytInitialPlayerResponse = {
+        videoDetails: { videoId: 'TESTVID123', title: 'Attention Explained (E2E Fixture)' },
+        captions: {
+          playerCaptionsTracklistRenderer: {
+            captionTracks: [
+              {
+                baseUrl: 'http://localhost:5050/__test__/sample-timedtext.json',
+                languageCode: 'en',
+                kind: '',
+                name: { simpleText: 'English' },
+                isTranslatable: true,
+              },
+            ],
+          },
+        },
+      };
+    </script>
+  </body>
+</html>

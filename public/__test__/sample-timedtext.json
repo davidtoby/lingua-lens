@@ -1,0 +1,15 @@
+{
+  "wireMagic": "pb3",
+  "events": [
+    { "tStartMs": 0, "dDurationMs": 3000, "segs": [{ "utf8": "Hello everyone, welcome back to the channel." }] },
+    { "tStartMs": 3000, "dDurationMs": 3000, "segs": [{ "utf8": "Today we are going to talk about attention mechanisms." }] },
+    { "tStartMs": 6000, "dDurationMs": 3200, "segs": [{ "utf8": "Attention lets the model focus on the most relevant tokens." }] },
+    { "tStartMs": 9200, "dDurationMs": 2800, "segs": [{ "utf8": "This is the core idea behind the transformer architecture." }] },
+    { "tStartMs": 12000, "dDurationMs": 3000, "segs": [{ "utf8": "Let us walk through a concrete example step by step." }] },
+    { "tStartMs": 15000, "dDurationMs": 2600, "segs": [{ "utf8": "First, we compute the query, key and value matrices." }] },
+    { "tStartMs": 17600, "dDurationMs": 3000, "segs": [{ "utf8": "Then we take the softmax over the scaled dot products." }] },
+    { "tStartMs": 20600, "dDurationMs": 2800, "segs": [{ "utf8": "Finally we combine the values with these weights." }] },
+    { "tStartMs": 23400, "dDurationMs": 3000, "segs": [{ "utf8": "That is how a single attention head works." }] },
+    { "tStartMs": 26400, "dDurationMs": 3200, "segs": [{ "utf8": "Thanks for watching, see you in the next video." }] }
+  ]
+}

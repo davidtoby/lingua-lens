@@ -1,0 +1,120 @@
+# LinguaLens
+
+**给网页加一层双语透镜。** 一个 Chrome 扩展 + 自建翻译服务：把任意 YouTube 视频变成双语字幕，一键导出双语 SRT / VTT，还能在抓不到字幕时导入本地字幕继续翻译。
+
+[English](README.md)
+
+![YouTube 双语字幕](docs/screenshot-subtitles.png)
+
+## 能做什么
+
+- **YouTube 双语字幕**：自动识别视频字幕轨，逐句翻译，译文紧贴在原文下方跟随播放进度显示。
+- **下载双语字幕**：一键导出「双语 / 仅译文 / 仅原文」三种模式，格式支持 SRT 与 VTT，时间轴完整。
+- **YouTube 拒绝给字幕也能用**：字幕抓取做了四路降级；四路都失败时可以手动导入 SRT / VTT，照样翻译并导出。
+- **客户端不含任何密钥**：翻译请求全部走你自己的服务端，模型 Token 只存在服务端。
+- **14 种目标语言**、字幕字号/位置可调、已译结果本地缓存。
+
+## 架构
+
+```
+Chrome MV3 扩展  ──HTTP──▶  Next.js 服务端  ──▶  LLM（内置 Token）
+ content / background / popup    /api/translate
+ options / injected（页面世界）   /api/youtube/timedtext
+                                 /api/health
+```
+
+| 路径 | 作用 |
+| --- | --- |
+| `src/app/api/translate/route.ts` | 批量翻译接口（传入字符串数组，返回同长度译文数组） |
+| `src/app/api/youtube/timedtext/route.ts` | 服务端字幕代理（兜底） |
+| `src/app/api/health/route.ts` | 健康检查、当前模型、支持语言 |
+| `src/lib/translate.ts` | 每批 24 条、最多 4 批并发、进程内缓存、失败逐条兜底 |
+| `public/extension/` | Chrome 扩展源码 |
+| `scripts/build-extension.cjs` | 打包扩展为 zip |
+| `tests/e2e-*.js` | Playwright 端到端测试（真实 Chromium 加载扩展） |
+
+### 字幕抓取策略
+
+YouTube 从 2025 年起加强了 `timedtext` 校验（PoToken + 来源判定），所以扩展按顺序尝试四条路径，拿到内容就停：
+
+1. 后台 Service Worker 直连 `youtube.com/api/timedtext`（带扩展主机权限）。
+2. 页面世界内 `fetch`（同源、带页面 Cookie）。
+3. 复用播放器自身请求里带 `pot=` 签名的 timedtext 地址。
+4. 官方字幕面板接口 `youtubei/v1/get_transcript`。
+
+四条都拿不到时，浮层会明确提示，可以改用「导入本地字幕文件」。
+
+## 快速开始
+
+### 1. 启动服务端
+
+```bash
+bash ./scripts/prepare.sh   # 首次安装依赖
+bash ./scripts/dev.sh       # 开发服务，默认 http://localhost:5050
+```
+
+> 默认端口 5050，因为 macOS 的 AirPlay 接收器占用了 5000。需要换端口用 `PORT=6000 bash ./scripts/dev.sh`，同时把扩展里的服务地址改成一致。
+
+自检：
+
+```bash
+curl -s http://localhost:5050/api/health
+curl -s -X POST http://localhost:5050/api/translate \
+  -H 'Content-Type: application/json' \
+  -d '{"texts":["Attention is all you need."],"targetLang":"zh-CN"}'
+```
+
+### 2. 安装扩展
+
+1. 把 `public/tobytranslate-youtube-bilingual-v1.0.0.zip` 解压到固定目录（别放临时目录）。
+2. 打开 `chrome://extensions`，开启「开发者模式」。
+3. 点「加载已解压的扩展程序」，选中解压后的目录（目录里直接能看到 `manifest.json`）。
+4. 打开任意 YouTube 视频，右下角出现字幕浮层即成功。
+
+扩展默认连 `http://localhost:5050`，在弹窗「设置」或选项页可以改地址并点「测试连接」。
+
+## 使用
+
+| 操作 | 方式 |
+| --- | --- |
+| 翻译字幕 | 打开 YouTube 视频后自动开始 |
+| 开关字幕 | 浮层开关 或 `Alt + T` |
+| 下载字幕 | 浮层按钮、`Alt + D`、或弹窗下载区（双语/仅译文/仅原文 × SRT/VTT） |
+| 切换目标语言 | 弹窗 → 目标语言（14 种） |
+| 导入本地字幕 | 弹窗 → 导入本地字幕文件（SRT / VTT） |
+| 调整显示 | 选项页：字号、垂直位置、隐藏原生字幕、显示原文 |
+
+## 接口
+
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| `GET` | `/api/health` | 状态、模型、语言、运行时长 |
+| `POST` | `/api/translate` | `{ texts: string[], targetLang?: string }` → `{ translations: string[] }` |
+| `GET` | `/api/youtube/timedtext` | 字幕代理：`?url=<timedtext 地址>` 或 `?v=<videoId>&lang=<code>` |
+
+## 测试
+
+```bash
+pnpm ts-check && pnpm lint:build && pnpm lint:style
+node tests/e2e-extension.js   # 12 项断言：渲染、快捷键、SRT/VTT 导出
+node tests/e2e-import.js      # 8 项断言：手动导入字幕链路
+```
+
+E2E 用真实 Chromium 加载扩展，并用假 YouTube 页面（`tests/fixtures/youtube-fixture.html`）驱动，不依赖 YouTube 的反爬判定。
+
+## 已知限制
+
+- 字幕可用性取决于网络。机房 IP 下 YouTube 常返回 `is_servable: false` 与空字幕，建议在普通家庭网络验证，或用「导入本地字幕」。
+- 长视频（500+ 条字幕）首次翻译需要几十秒，字幕会逐段出现。
+- 翻译缓存是进程内的，服务端重启即清空。
+- 翻译质量与速度取决于服务端配置的模型。
+
+## 后续计划
+
+- [ ] 字幕浮层可拖动，不再固定在视频底部。
+- [ ] 全页面翻译：任意网页逐段双语对照，可开关。
+- [ ] 按站点记忆规则与源语言自动识别。
+
+## 许可
+
+MIT
