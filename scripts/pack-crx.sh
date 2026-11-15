@@ -24,4 +24,6 @@ if [ ! -f "$ROOT/public/extension.crx" ]; then
 fi
 
 mv "$ROOT/public/extension.crx" "$ROOT/public/lingualens.crx"
+# 部署服务以其他用户读取静态文件，必须放开读权限
+chmod 644 "$ROOT/public/lingualens.crx"
 ls -l "$ROOT/public/lingualens.crx"

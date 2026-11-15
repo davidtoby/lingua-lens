@@ -13,7 +13,9 @@ function resolveOrigin(request: Request) {
   const headers = request.headers;
   const host = headers.get('x-forwarded-host') || headers.get('host');
   if (!host) return FALLBACK_ORIGIN;
-  const proto = headers.get('x-forwarded-proto') || 'https';
+  // 线上网关会把 x-forwarded-proto 报成 http，只有本机开发才需要跟随它
+  const isLocal = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host);
+  const proto = isLocal ? headers.get('x-forwarded-proto') || 'http' : 'https';
   return `${proto}://${host}`;
 }
 
@@ -38,7 +40,7 @@ export async function GET(request: Request) {
   const xml = `<?xml version='1.0' encoding='UTF-8'?>
 <gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
   <app appid='${EXTENSION_ID}'>
-    <updatecheck codebase='${origin}/lingualens.crx' version='${version}'/>
+    <updatecheck codebase='${origin}/api/extension/crx' version='${version}'/>
   </app>
 </gupdate>
 `;

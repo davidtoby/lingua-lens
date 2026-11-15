@@ -12,7 +12,9 @@ function resolveOrigin(request: Request) {
   const headers = request.headers;
   const host = headers.get('x-forwarded-host') || headers.get('host');
   if (!host) return FALLBACK_ORIGIN;
-  const proto = headers.get('x-forwarded-proto') || 'https';
+  // 线上网关会把 x-forwarded-proto 报成 http，只有本机开发才需要跟随它
+  const isLocal = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host);
+  const proto = isLocal ? headers.get('x-forwarded-proto') || 'http' : 'https';
   return `${proto}://${host}`;
 }
 
@@ -43,13 +45,14 @@ export async function GET(request: Request) {
   const version = (meta?.version as string) || (manifest?.version as string) || '0.0.0';
   const zipFile = (meta?.file as string) || `lingualens-v${version}.zip`;
   const crxFile = (meta?.crxFile as string) || 'lingualens.crx';
+  const crxUrl = crxFile ? `${origin}/api/extension/crx` : '';
 
   return jsonWithCors({
     name: (manifest?.name as string) || 'LinguaLens',
     version,
     minChrome: (manifest?.minimum_chrome_version as string) || '116',
     zipUrl: `${origin}/${zipFile}`,
-    crxUrl: `${origin}/${crxFile}`,
+    crxUrl,
     updateManifestUrl: `${origin}/updates.xml`,
     notes: Array.isArray(meta?.notes) ? meta?.notes : [],
     builtAt: (meta?.builtAt as string) || null,
