@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LinguaLens · 双语字幕与整页翻译",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "YouTube 双语字幕、双语字幕下载，以及任意网页的整页双语翻译。字幕框可自由拖动。",
   "minimum_chrome_version": "116",
   "update_url": "https://lingualens.coze.site/updates.xml",
@@ -44,6 +44,17 @@
         "https://m.youtube.com/*"
       ],
       "js": [
+        "injected.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
         "content.js"
       ],
       "css": [
@@ -65,17 +76,6 @@
       ],
       "run_at": "document_idle",
       "all_frames": false
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "injected.js"
-      ],
-      "matches": [
-        "https://www.youtube.com/*",
-        "https://m.youtube.com/*"
-      ]
     }
   ],
   "icons": {

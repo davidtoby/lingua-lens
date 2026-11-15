@@ -1,14 +1,14 @@
 {
   "name": "LinguaLens · 双语字幕与整页翻译",
-  "version": "2.1.1",
-  "file": "lingualens-v2.1.1.zip",
-  "size": 44138,
-  "sizeLabel": "43.1 KB",
+  "version": "2.1.2",
+  "file": "lingualens-v2.1.2.zip",
+  "size": 44300,
+  "sizeLabel": "43.3 KB",
   "crxFile": "lingualens.crx",
-  "crxSize": 44484,
+  "crxSize": 44666,
   "notes": [
-    "默认服务地址改为 lingualens.coze.site（更好记）",
-    "更新通道同步指向新域名，旧地址仍可访问"
+    "修复 YouTube 页 CSP 报错：injected.js 改为 MAIN world 内容脚本，不再被页面安全策略拦截",
+    "移除不再需要的 web_accessible_resources，权限面更小"
   ],
-  "builtAt": "2026-11-15T00:59:22.037Z"
+  "builtAt": "2026-11-15T09:26:48.355Z"
 }

@@ -120,22 +120,18 @@
 
   /* ------------------------------ 页面桥接 ------------------------------- */
 
-  function injectPageScript() {
-    if (state.injected) return;
+  /**
+   * injected.js 通过 manifest 的 content_scripts + world: "MAIN" 直接运行在页面主世界，
+   * 不再用 <script src="chrome-extension://..."> 注入：那种写法会被页面 CSP 拦下并报
+   * "Unsafe attempt to load URL chrome-extension://.../injected.js ... Domains, protocols
+   * and ports must match."。这里只保留一个就绪标记，便于日志排查。
+   */
+  function markBridgeReady() {
     state.injected = true;
-    try {
-      const script = document.createElement('script');
-      script.src = chrome.runtime.getURL('injected.js');
-      script.id = 'ytbt-injected-script';
-      script.onload = () => script.remove();
-      (document.head || document.documentElement).appendChild(script);
-    } catch (error) {
-      log('注入页面脚本失败', error);
-    }
   }
 
   function requestTracksFromPage() {
-    injectPageScript();
+    markBridgeReady();
     return new Promise((resolve) => {
       const id = `ytbt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       let settled = false;
@@ -166,7 +162,7 @@
   }
 
   function requestFromPage(type, payload, resultType, timeout) {
-    injectPageScript();
+    markBridgeReady();
     return new Promise((resolve) => {
       const id = `ytbt-${type}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       let settled = false;

@@ -79,7 +79,7 @@ curl -s -X POST http://localhost:5050/api/translate \
 
 ### 2. Install the extension
 
-1. Unzip `public/lingualens-v2.1.1.zip` into a permanent folder.
+1. Unzip `public/lingualens-v2.1.2.zip` into a permanent folder.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and pick the unzipped folder (it must contain `manifest.json`).
 4. Open any YouTube video — the subtitle overlay appears on the player.
@@ -98,7 +98,7 @@ How far the automation goes depends on how the extension was installed:
 
 - **`.crx` install / enterprise policy** — Chrome polls `updates.xml` and upgrades silently.
 - **Unpacked install** — Chrome never auto-updates unpacked extensions; use **检查更新**, then reload the new folder.
-- **Chrome Web Store** — the only way to get silent updates for ordinary users. The `public/lingualens-v2.1.1.zip` is store-ready (MV3, no remote code, no `default_locale`).
+- **Chrome Web Store** — the only way to get silent updates for ordinary users. The `public/lingualens-v2.1.2.zip` is store-ready (MV3, no remote code, no `default_locale`).
 
 Server-side changes (model, prompt, rate limits) need no client update at all — they ship with the backend.
 
@@ -107,7 +107,7 @@ Server-side changes (model, prompt, rate limits) need no client update at all �
 Everything needed to publish is in [`store/`](store/README.md): listing copy (zh/en), permission justifications, privacy policy, five 1280×800 screenshots and the promo tiles.
 
 ```bash
-node scripts/build-store-package.cjs   # -> store/lingualens-v2.1.1-store.zip (update_url stripped)
+node scripts/build-store-package.cjs   # -> store/lingualens-v2.1.2-store.zip (update_url stripped)
 ```
 
 Privacy policy (live): <https://lingualens.coze.site/privacy>

@@ -40,8 +40,8 @@ function readMeta(): ExtensionMeta {
   } catch {
     return {
       name: 'LinguaLens · 双语字幕与整页翻译',
-      version: '2.1.1',
-      file: 'lingualens-v2.1.1.zip',
+      version: '2.1.2',
+      file: 'lingualens-v2.1.2.zip',
       sizeLabel: '43 KB',
     };
   }

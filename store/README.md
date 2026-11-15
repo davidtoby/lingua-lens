@@ -2,7 +2,7 @@
 
 面向「普通用户免下载、自动更新」的分发通道：**Chrome 应用商店**。本目录是提交所需的全部材料与操作步骤。
 
-上架包：`store/lingualens-v2.1.1-store.zip`（由 `node scripts/build-store-package.cjs` 生成，已移除 `update_url`，商店渠道由 Chrome 托管更新）。
+上架包：`store/lingualens-v2.1.2-store.zip`（由 `node scripts/build-store-package.cjs` 生成，已移除 `update_url`，商店渠道由 Chrome 托管更新）。
 
 ---
 
@@ -10,7 +10,7 @@
 
 | 文件 | 规格 | 用途 | 状态 |
 | --- | --- | --- | --- |
-| `store/lingualens-v2.1.1-store.zip` | 43.1 KB，manifest v3，无 `update_url` | 上传到商店的扩展包 | ✅ 已生成 |
+| `store/lingualens-v2.1.2-store.zip` | 43.1 KB，manifest v3，无 `update_url` | 上传到商店的扩展包 | ✅ 已生成 |
 | `public/extension/icons/icon128.png` | 128×128 PNG | 商店图标（搜索结果、安装按钮） | ✅ 已在包内 |
 | `public/extension/icons/icon48.png` | 48×48 PNG | 扩展管理页图标 | ✅ 已在包内 |
 | `store/screenshots/01-youtube-bilingual.png` | 1280×800 | 截图 1：YouTube 双语字幕（真实渲染） | ✅ |
@@ -43,7 +43,7 @@
 
 ## 3. 提交流程（约 20 分钟）
 
-1. 开发者信息中心 → **新增项目** → 上传 `store/lingualens-v2.1.1-store.zip`。
+1. 开发者信息中心 → **新增项目** → 上传 `store/lingualens-v2.1.2-store.zip`。
 2. **商店信息（Store listing）** 标签页，按 `listing-zh.md` / `listing-en.md` 填写：
    - 名称、简短说明（≤132 字符）、详细说明（≤16000 字符）
    - 分类：`Productivity`（生产力工具）
@@ -121,5 +121,5 @@
 - [ ] 权限理由与 `permissions-justification.md` 一致
 - [ ] 数据用途勾选包含「网站内容 → 应用功能」
 - [ ] 远程代码声明为「否」
-- [ ] 上传的 zip 是 `lingualens-v2.1.1-store.zip`（**不是** `public/` 里带 `update_url` 的那个）
+- [ ] 上传的 zip 是 `lingualens-v2.1.2-store.zip`（**不是** `public/` 里带 `update_url` 的那个）
 - [ ] 用干净浏览器实测：安装 → 打开 YouTube 视频出双语字幕 → 按 Alt+A 整页翻译 → 下载字幕

@@ -1,4 +1,8 @@
 {
+  "2.1.2": [
+    "修复 YouTube 页 CSP 报错：injected.js 改为 MAIN world 内容脚本，不再被页面安全策略拦截",
+    "移除不再需要的 web_accessible_resources，权限面更小"
+  ],
   "2.1.1": [
     "默认服务地址改为 lingualens.coze.site（更好记）",
     "更新通道同步指向新域名，旧地址仍可访问"

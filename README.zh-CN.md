@@ -76,7 +76,7 @@ curl -s -X POST http://localhost:5050/api/translate \
 
 ### 2. 安装扩展
 
-1. 把 `public/lingualens-v2.1.1.zip` 解压到固定目录（别放临时目录）。
+1. 把 `public/lingualens-v2.1.2.zip` 解压到固定目录（别放临时目录）。
 2. 打开 `chrome://extensions`，开启「开发者模式」。
 3. 点「加载已解压的扩展程序」，选中解压后的目录（目录里直接能看到 `manifest.json`）。
 4. 打开任意 YouTube 视频，播放器上出现字幕浮层即成功。
@@ -97,7 +97,7 @@ Chrome 会提示「读取和更改您在所有网站上的数据」——这是�
 
 - **`.crx` 安装 / 企业策略分发** —— Chrome 会按 `updates.xml` 静默升级。
 - **解压加载（unpacked）** —— Chrome 不会自动更新解压扩展，用「检查更新」拿到新包后重新加载即可。
-- **Chrome 应用商店** —— 普通用户静默更新的唯一正规路径；`public/lingualens-v2.1.1.zip` 已满足上架要求（MV3、无远程代码、无 `default_locale`）。
+- **Chrome 应用商店** —— 普通用户静默更新的唯一正规路径；`public/lingualens-v2.1.2.zip` 已满足上架要求（MV3、无远程代码、无 `default_locale`）。
 
 服务端侧改动（模型、提示词、限流）不需要更新客户端，跟着后端发布即可。
 
@@ -106,7 +106,7 @@ Chrome 会提示「读取和更改您在所有网站上的数据」——这是�
 上架所需材料都在 [`store/`](store/README.md)：中英文商店文案、权限理由、隐私政策、5 张 1280×800 截图和宣传图。
 
 ```bash
-node scripts/build-store-package.cjs   # 生成 store/lingualens-v2.1.1-store.zip（自动去掉 update_url）
+node scripts/build-store-package.cjs   # 生成 store/lingualens-v2.1.2-store.zip（自动去掉 update_url）
 ```
 
 隐私政策（线上）：<https://lingualens.coze.site/privacy>

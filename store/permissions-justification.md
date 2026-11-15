@@ -54,10 +54,12 @@ LinguaLens 的单一用途是：把网页与视频中的外语内容翻译成「
 翻译服务的地址。默认指向 https://lingualens.coze.site；localhost / 127.0.0.1 用于开发者自建服务端联调，coze.site 是默认托管服务的域名。扩展只向该地址 POST 待翻译文本并读取 JSON 译文。
 ```
 
-### 6. 内容脚本与 `web_accessible_resources`（`injected.js`）
+### 6. 内容脚本 `injected.js`（`world: "MAIN"`）
 
 ```
-injected.js 运行在 YouTube 页面的主世界（MAIN world），因为读取播放器对象（ytInitialPlayerResponse、video 元素的 currentTime）必须与页面同上下文；它只做读取字幕轨与跟随播放进度，不修改页面数据、不发起网络请求。
+injected.js 以 content_scripts 的方式声明在 manifest 里，并指定 world: "MAIN"，运行在 YouTube 页面的主世界，因为读取播放器对象（ytInitialPlayerResponse、video 元素的 currentTime）必须与页面同上下文；它只做读取字幕轨与跟随播放进度，不修改页面数据、不发起网络请求。
+
+说明：这里刻意没有使用「注入 <script src="chrome-extension://..."> + web_accessible_resources」的旧写法。那种写法会被 YouTube 这类 CSP 严格的页面拦下（报 Unsafe attempt to load URL ... Domains, protocols and ports must match），并且需要额外暴露 web_accessible_resources。改用 MAIN world 内容脚本后，本扩展的 web_accessible_resources 为空。
 ```
 
 ## 三、远程代码声明（Remote code）
