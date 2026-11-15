@@ -24,7 +24,7 @@
         <div class="field">
           <label for="backendUrl">服务端地址</label>
           <div class="inline">
-            <input id="backendUrl" type="url" placeholder="http://localhost:5050" />
+            <input id="backendUrl" type="url" placeholder="https://5tjjyhbf89.coze.site" />
             <button id="testBackend" class="btn ghost" type="button">测试连接</button>
           </div>
           <p class="hint">本地启动的服务端默认地址为 http://localhost:5050，可在启动日志里确认端口。</p>
@@ -85,6 +85,21 @@
         <label class="check"><input id="pageAutoTranslate" type="checkbox" /> 打开网页后自动整页翻译（谨慎开启）</label>
         <p class="hint">
           在任意网页按 <kbd>Alt</kbd> + <kbd>A</kbd> 或点击弹窗「翻译本页」，即可把正文逐段翻成双语；译文以浅色块插在原文下方，点「恢复原文」可完全还原。
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>版本与更新</h2>
+        <div class="server-line">
+          <span class="dot" id="updateDot"></span>
+          <span id="updateText">当前版本检测中…</span>
+        </div>
+        <div class="footer" style="justify-content:flex-start;margin-top:10px">
+          <button id="checkUpdateBtn" class="btn ghost small" type="button">检查更新</button>
+          <button id="openLatestBtn" class="btn ghost small" type="button" hidden>获取新版</button>
+        </div>
+        <p class="hint" id="updateHint">
+          扩展默认连接线上服务，无需本地启动；发布新版本后会自动检测，也可以在弹窗里点「检查更新」。
         </p>
       </section>
 

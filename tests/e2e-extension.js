@@ -16,6 +16,20 @@ function check(name, ok, extra = '') {
     viewport: { width: 1280, height: 800 },
     args: [`--disable-extensions-except=${EXT_DIR}`, `--load-extension=${EXT_DIR}`, '--no-first-run'],
   });
+  // 测试固定连本地后端（通过扩展页写入 storage，SW 内的 chrome.* 在自动化环境下不可靠）
+  {
+    const anySw = ctx.serviceWorkers()[0] || (await ctx.waitForEvent('serviceworker', { timeout: 20000 }));
+    const extId = anySw.url().split('/')[2];
+    const setupPage = await ctx.newPage();
+    await setupPage.goto(`chrome-extension://${extId}/options.html`);
+    const applied = await setupPage.evaluate(async () => {
+      await chrome.storage.sync.set({ backendUrl: 'http://localhost:5050' });
+      const all = await chrome.storage.sync.get({ backendUrl: '' });
+      return all.backendUrl;
+    });
+    await setupPage.close();
+    if (applied !== 'http://localhost:5050') throw new Error('无法写入测试后端地址：' + applied);
+  }
   const page = ctx.pages()[0] || (await ctx.newPage());
   const downloads = [];
   page.on('download', async (d) => {
@@ -91,6 +105,13 @@ function check(name, ok, extra = '') {
   await popup.reload();
   await popup.waitForTimeout(1500);
   await popup.screenshot({ path: '/tmp/shot-popup.png', fullPage: true });
+  const updateInfo = await popup.evaluate(async () => {
+    const res = await chrome.runtime.sendMessage({ type: 'CHECK_UPDATE' });
+    return res && res.ok ? res.data : { error: res && res.error };
+  });
+  check('弹窗可检查更新', Boolean(updateInfo && updateInfo.current), JSON.stringify(updateInfo).slice(0, 160));
+  check('更新信息与线上版本一致', Boolean(updateInfo && updateInfo.latest), String(updateInfo && updateInfo.latest));
+
   const options = await ctx.newPage();
   await options.goto(`chrome-extension://${EXT_ID}/options.html`);
   await options.waitForTimeout(1200);

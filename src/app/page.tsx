@@ -18,7 +18,7 @@ import ServicePanel from '@/components/landing/service-panel';
 export const metadata: Metadata = {
   title: 'LinguaLens · 双语字幕与整页翻译插件',
   description:
-    'Chrome 扩展 + 本地翻译服务：自动翻译 YouTube 视频字幕、字幕框可拖动、一键下载双语 SRT / VTT，还能把任意网页整页翻成双语。',
+    'Chrome 扩展 + 云端翻译服务：自动翻译 YouTube 视频字幕、字幕框可拖动、一键下载双语 SRT / VTT，还能把任意网页整页翻成双语。安装即用，无需本地部署。',
 };
 
 type ExtensionMeta = {
@@ -26,7 +26,11 @@ type ExtensionMeta = {
   version: string;
   file: string;
   sizeLabel: string;
+  crxFile?: string | null;
+  notes?: string[];
 };
+
+const SERVICE_BASE = 'https://5tjjyhbf89.coze.site';
 
 function readMeta(): ExtensionMeta {
   try {
@@ -35,9 +39,9 @@ function readMeta(): ExtensionMeta {
   } catch {
     return {
       name: 'LinguaLens · 双语字幕与整页翻译',
-      version: '2.0.0',
-      file: 'lingualens-v2.0.0.zip',
-      sizeLabel: '41 KB',
+      version: '2.1.0',
+      file: 'lingualens-v2.1.0.zip',
+      sizeLabel: '43 KB',
     };
   }
 }
@@ -89,8 +93,8 @@ const steps = [
     desc: '点击「加载已解压的扩展程序」，选择刚才解压出的文件夹，插件图标会出现在工具栏。',
   },
   {
-    title: '确认服务端已启动',
-    desc: '本地服务默认运行在 http://localhost:5050，扩展设置页可修改地址并测试连接。',
+    title: '装好即用',
+    desc: `扩展默认连接线上翻译服务（${SERVICE_BASE}），不需要在本地启动任何服务；设置页可查看连接状态。`,
   },
 ];
 
@@ -112,6 +116,14 @@ const faqs = [
     a: '需要。整页翻译要在任意网页注入脚本并读取正文，Chrome 会提示「读取和更改您在所有网站上的数据」。所有译文都由你本地的服务端生成，扩展不会把页面内容发往第三方。',
   },
   {
+    q: '还要自己在本地启动服务吗？',
+    a: `不用。翻译服务已经部署到公网 ${SERVICE_BASE}，扩展装好默认就连接它，换网络、换设备都能直接用；只有想接自己的服务时，才在设置页把地址改成自建服务。`,
+  },
+  {
+    q: '以后怎么升级插件？',
+    a: '插件里有「检查更新」：弹窗和设置页都会显示当前版本与线上版本，发现新版直接给出下载入口，不用再回来看这个页面。用 .crx 安装（或在企业策略下分发）的扩展，还会按 updates.xml 自动静默升级。',
+  },
+  {
     q: '可以在 Edge / Brave 上用吗？',
     a: '可以。只要内核是 Chromium 且支持 Manifest V3，安装步骤与 Chrome 一致。',
   },
@@ -131,8 +143,8 @@ export default function Home() {
               译
             </span>
             <div className="leading-tight">
-              <div className="text-sm font-semibold">TobyTranslate</div>
-              <div className="text-[11px] text-muted-foreground">YouTube 双语字幕</div>
+              <div className="text-sm font-semibold">LinguaLens</div>
+              <div className="text-[11px] text-muted-foreground">双语字幕 · 整页翻译</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -158,7 +170,7 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-[11px] text-muted-foreground">
                 <Sparkles className="h-3 w-3 text-primary" />
-                Chrome 扩展 + 本地翻译服务 · v2 已联调
+                Chrome 扩展 + 云端翻译服务 · v{meta.version} 已上线
               </div>
               <h1 className="mt-5 text-3xl font-bold leading-[1.25] tracking-tight sm:text-4xl lg:text-[42px]">
                 YouTube 双语字幕
@@ -167,7 +179,8 @@ export default function Home() {
               </h1>
               <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-[15px]">
                 自动抓取视频字幕轨，调用内置大模型逐句翻译，译文与原文同屏对照，字幕框可以拖到画面任意位置；
-                看完一键导出双语 SRT / VTT。v2 还能把任意网页整页翻成双语。本地运行，不需要第三方 API Key。
+                看完一键导出双语 SRT / VTT；任意网页还能整页翻成双语。翻译服务已部署到公网，装好插件直接可用，
+                不需要本地启动服务，也不需要第三方 API Key。
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <a
@@ -186,7 +199,7 @@ export default function Home() {
                 </a>
               </div>
               <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
-                {['Manifest V3', '字幕可拖动', '整页翻译', 'SRT / VTT 双语导出', '内置模型无需 Key'].map((item) => (
+                {['Manifest V3', '字幕可拖动', '整页翻译', '公网服务免部署', '在线更新'].map((item) => (
                   <span key={item} className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                     {item}
@@ -332,9 +345,10 @@ export default function Home() {
         {/* 服务端联调 */}
         <section className="mx-auto w-full max-w-6xl px-5 py-14">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">服务端联调</h2>
+            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">线上服务</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              服务端已随项目一起启动，下面两块是真实请求，不是示意数据。
+              翻译服务已部署在 <code className="rounded bg-muted px-1.5 py-0.5">{SERVICE_BASE}</code>，扩展在任意网络下都能直接调用；
+              下面两块是真实请求，不是示意数据。
             </p>
           </div>
           <ServicePanel />
@@ -355,6 +369,16 @@ export default function Home() {
                 method: 'GET',
                 path: '/api/youtube/timedtext',
                 desc: '字幕代理兜底：浏览器侧拉不到 timedtext 时由服务端代取。',
+              },
+              {
+                method: 'GET',
+                path: '/api/extension/latest',
+                desc: '版本发现：返回线上最新版本、下载地址与更新说明，供插件检查更新。',
+              },
+              {
+                method: 'GET',
+                path: '/updates.xml',
+                desc: 'Chrome 扩展更新清单，配合 .crx 实现安装后静默升级。',
               },
             ].map((api) => (
               <div key={api.path} className="rounded-2xl border border-border bg-card p-5">
@@ -382,26 +406,29 @@ export default function Home() {
                 <li>· 打开任意带字幕的 YouTube 视频，插件自动开始翻译，播放器右下角显示翻译进度。</li>
                 <li>· 鼠标移到播放器右上角，可切换开关或直接下载双语字幕。</li>
                 <li>· 快捷键：Alt + T 开关双语字幕，Alt + D 下载双语 SRT。</li>
-                <li>· 点击工具栏插件图标，可以切换目标语言、查看字幕条数、选择导出格式。</li>
+                <li>· 点击工具栏插件图标，可以切换目标语言、查看字幕条数、选择导出格式、检查更新。</li>
+                <li>· 任意网页按 Alt + A 整页双语翻译，再按一次还原原文。</li>
               </ul>
             </div>
             <div className="rounded-2xl border border-border bg-card p-6">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Terminal className="h-4 w-4 text-primary" />
-                服务端本地启动
+                服务地址与在线更新
               </div>
               <pre className="mt-4 overflow-x-auto rounded-xl bg-[#0b0d12] px-4 py-3 text-[11px] leading-6 text-white/80">
-{`# 1. 准备依赖
-bash ./scripts/prepare.sh
+{`# 线上服务（扩展默认连接）
+https://5tjjyhbf89.coze.site
 
-# 2. 启动开发服务（默认 5000 端口）
-bash ./scripts/dev.sh
+# 健康检查
+curl -s https://5tjjyhbf89.coze.site/api/health
 
-# 3. 验证接口
-curl -s http://localhost:5050/api/health`}
+# 版本发现 / 更新清单
+curl -s https://5tjjyhbf89.coze.site/api/extension/latest
+curl -s https://5tjjyhbf89.coze.site/updates.xml`}
               </pre>
               <p className="mt-3 text-xs leading-6 text-muted-foreground">
-                翻译模型由服务端内置 Token 提供，可通过环境变量 <code className="rounded bg-muted px-1">TRANSLATE_MODEL</code> 切换模型。
+                线上发布新版本后，插件弹窗「版本与更新」会提示并给出一键获取入口；用 <code className="rounded bg-muted px-1">.crx</code> 安装的扩展还会按
+                <code className="rounded bg-muted px-1">updates.xml</code> 自动升级。翻译模型仍由服务端内置 Token 提供。
               </p>
             </div>
           </div>
@@ -423,8 +450,8 @@ curl -s http://localhost:5050/api/health`}
 
       <footer className="border-t border-border/60 py-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-5 text-xs text-muted-foreground sm:flex-row">
-          <span>TobyTranslate · YouTube 双语字幕插件 · v{meta.version}</span>
-          <span>扩展端纯前端运行，翻译服务由本地后端提供</span>
+          <span>LinguaLens · 双语字幕与整页翻译 · v{meta.version}</span>
+          <span>扩展端纯前端运行，翻译服务由云端后端提供</span>
         </div>
       </footer>
     </div>

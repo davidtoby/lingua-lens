@@ -7,7 +7,7 @@ const DEFAULT_SETTINGS = {
   enabled: true,
   autoTranslate: true,
   targetLang: 'zh-CN',
-  backendUrl: 'http://localhost:5050',
+  backendUrl: 'https://5tjjyhbf89.coze.site',
   showOriginal: true,
   hideNativeCaptions: true,
   fontSize: 20,
@@ -174,6 +174,39 @@ async function checkBackend() {
   }
 }
 
+/* -------------------------------- 版本更新 -------------------------------- */
+
+function compareVersions(a, b) {
+  const pa = String(a || '0').split('.').map((n) => Number(n) || 0);
+  const pb = String(b || '0').split('.').map((n) => Number(n) || 0);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i += 1) {
+    const x = pa[i] || 0;
+    const y = pb[i] || 0;
+    if (x !== y) return x > y ? 1 : -1;
+  }
+  return 0;
+}
+
+async function checkUpdate() {
+  const settings = await getSettings();
+  const backend = normalizeBackendUrl(settings.backendUrl);
+  const current = chrome.runtime.getManifest().version;
+  const response = await fetch(`${backend}/api/extension/latest`, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`更新服务返回 HTTP ${response.status}`);
+  const payload = await response.json();
+  const latest = payload.version || current;
+  return {
+    current,
+    latest,
+    hasUpdate: compareVersions(latest, current) > 0,
+    zipUrl: payload.zipUrl || `${backend}/lingualens-v${latest}.zip`,
+    crxUrl: payload.crxUrl || `${backend}/lingualens.crx`,
+    notes: Array.isArray(payload.notes) ? payload.notes : [],
+    releasedAt: payload.releasedAt || '',
+  };
+}
+
 /* ---------------------------------- 下载 ---------------------------------- */
 
 function toDataUrl(content, mime) {
@@ -192,6 +225,7 @@ const handlers = {
   GET_SETTINGS: () => getSettings(),
   SET_SETTINGS: (payload) => setSettings(payload),
   CHECK_BACKEND: () => checkBackend(),
+  CHECK_UPDATE: () => checkUpdate(),
   FETCH_TRACKS: async ({ videoId }) => {
     if (!videoId) throw new Error('缺少 videoId');
     return fetchTracksFromWatchPage(videoId);

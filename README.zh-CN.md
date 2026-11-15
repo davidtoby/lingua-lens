@@ -52,7 +52,11 @@ YouTube 从 2025 年起加强了 `timedtext` 校验（PoToken + 来源判定）�
 
 ## 快速开始
 
-### 1. 启动服务端
+### 1. 直接用线上服务（默认）
+
+不用装任何后端：扩展默认连接 `https://5tjjyhbf89.coze.site`，加载后即可在任意网络使用。
+
+### 1b. 或者自己跑一个服务端
 
 ```bash
 bash ./scripts/prepare.sh   # 首次安装依赖
@@ -72,14 +76,30 @@ curl -s -X POST http://localhost:5050/api/translate \
 
 ### 2. 安装扩展
 
-1. 把 `public/lingualens-v2.0.0.zip` 解压到固定目录（别放临时目录）。
+1. 把 `public/lingualens-v2.1.0.zip` 解压到固定目录（别放临时目录）。
 2. 打开 `chrome://extensions`，开启「开发者模式」。
 3. 点「加载已解压的扩展程序」，选中解压后的目录（目录里直接能看到 `manifest.json`）。
 4. 打开任意 YouTube 视频，播放器上出现字幕浮层即成功。
 
 Chrome 会提示「读取和更改您在所有网站上的数据」——这是整页翻译必需的权限；所有译文都由你自己的服务端生成，扩展不会把页面内容发往第三方。
 
-扩展默认连 `http://localhost:5050`，在弹窗「设置」或选项页可以改地址并点「测试连接」。
+扩展默认连线上服务 `https://5tjjyhbf89.coze.site`；想接自己的服务，就在选项页把地址改成 `http://localhost:5050` 并点「测试连接」。
+
+## 在线更新
+
+| 入口 | 说明 |
+| --- | --- |
+| 弹窗 / 设置页 → **检查更新** | 对比本地版本与 `GET /api/extension/latest`，有新版本时展示更新说明和下载入口 |
+| `GET /updates.xml` | Chrome 扩展更新清单（`manifest.json` 里的 `update_url`），扩展 ID 固定为 `megljaakikpaegbfnfdkphmpkapdonec` |
+| `GET /lingualens.crx` | 已签名安装包（`scripts/pack-crx.sh` 生成，私钥在 `.keys/`，不入库） |
+
+能自动到哪一步，取决于安装方式：
+
+- **`.crx` 安装 / 企业策略分发** —— Chrome 会按 `updates.xml` 静默升级。
+- **解压加载（unpacked）** —— Chrome 不会自动更新解压扩展，用「检查更新」拿到新包后重新加载即可。
+- **Chrome 应用商店** —— 普通用户静默更新的唯一正规路径；`public/lingualens-v2.1.0.zip` 已满足上架要求（MV3、无远程代码、无 `default_locale`）。
+
+服务端侧改动（模型、提示词、限流）不需要更新客户端，跟着后端发布即可。
 
 ## 使用
 
@@ -102,17 +122,19 @@ Chrome 会提示「读取和更改您在所有网站上的数据」——这是�
 | `GET` | `/api/health` | 状态、模型、语言、运行时长 |
 | `POST` | `/api/translate` | `{ texts: string[], targetLang?: string }` → `{ translations: string[] }` |
 | `GET` | `/api/youtube/timedtext` | 字幕代理：`?url=<timedtext 地址>` 或 `?v=<videoId>&lang=<code>` |
+| `GET` | `/api/extension/latest` | 扩展最新版本、zip/crx 下载地址、更新说明 |
+| `GET` | `/updates.xml` | Chrome 扩展更新清单 |
 
 ## 测试
 
 ```bash
 pnpm ts-check && pnpm lint:build && pnpm lint:style
-node tests/e2e-extension.js   # 12 项断言：渲染、快捷键、SRT/VTT 导出
+node tests/e2e-extension.js   # 14 项断言：渲染、快捷键、SRT/VTT 导出、检查更新
 node tests/e2e-import.js      # 8 项断言：手动导入字幕链路
 node tests/e2e-v2.js          # 16 项断言：字幕拖动与位置记忆、整页翻译、还原
 ```
 
-E2E 用真实 Chromium 加载扩展，并用假页面（`tests/fixtures/`）驱动，不依赖 YouTube 的反爬判定。
+E2E 脚本会把 `backendUrl` 固定到本地开发服务，不依赖线上部署；用真实 Chromium 加载扩展，并用假页面（`tests/fixtures/`）驱动，不依赖 YouTube 的反爬判定。
 
 ## 已知限制
 

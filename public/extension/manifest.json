@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
   "name": "LinguaLens · 双语字幕与整页翻译",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "YouTube 双语字幕、双语字幕下载，以及任意网页的整页双语翻译。字幕框可自由拖动。",
   "minimum_chrome_version": "116",
+  "update_url": "https://5tjjyhbf89.coze.site/updates.xml",
   "permissions": [
     "storage",
     "downloads"
@@ -25,7 +26,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "TobyTranslate 双语字幕",
+    "default_title": "LinguaLens 双语字幕与整页翻译",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

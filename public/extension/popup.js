@@ -2,7 +2,7 @@ const DEFAULT_SETTINGS = {
   enabled: true,
   autoTranslate: true,
   targetLang: 'zh-CN',
-  backendUrl: 'http://localhost:5050',
+  backendUrl: 'https://5tjjyhbf89.coze.site',
   showOriginal: true,
   hideNativeCaptions: true,
   fontSize: 20,
@@ -52,9 +52,15 @@ const el = {
   pageTranslateBtn: document.getElementById('pageTranslateBtn'),
   pageRestoreBtn: document.getElementById('pageRestoreBtn'),
   openOptions: document.getElementById('openOptions'),
+  updateDot: document.getElementById('updateDot'),
+  updateText: document.getElementById('updateText'),
+  updateHint: document.getElementById('updateHint'),
+  checkUpdateBtn: document.getElementById('checkUpdateBtn'),
+  openLatestBtn: document.getElementById('openLatestBtn'),
 };
 
 let activeTabId = null;
+let latestDownloadUrl = '';
 let activeIsYouTube = false;
 
 function sendToTab(type, payload) {
@@ -197,6 +203,36 @@ async function loadPageStatus() {
   }
 }
 
+async function checkUpdate() {
+  const current = chrome.runtime.getManifest().version;
+  el.updateText.textContent = `当前 v${current} · 检查中…`;
+  setDot(el.updateDot, 'warn');
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'CHECK_UPDATE' });
+    if (!result || !result.ok) throw new Error((result && result.error) || '检查失败');
+    const data = result.data || {};
+    if (data.hasUpdate) {
+      setDot(el.updateDot, 'warn');
+      el.updateText.textContent = `当前 v${data.current} · 线上 v${data.latest}`;
+      el.updateHint.textContent = (data.notes && data.notes.length
+        ? data.notes.slice(0, 2).join(' · ')
+        : '线上已发布新版本，点「获取新版」下载最新安装包');
+      latestDownloadUrl = data.crxUrl || data.zipUrl || '';
+      el.openLatestBtn.hidden = !latestDownloadUrl;
+    } else {
+      setDot(el.updateDot, 'ok');
+      el.updateText.textContent = `当前 v${data.current || current} · 已是最新`;
+      el.updateHint.textContent = '扩展会跟随线上版本；有新功能时这里会提示更新入口。';
+      el.openLatestBtn.hidden = true;
+    }
+  } catch (error) {
+    setDot(el.updateDot, 'err');
+    el.updateText.textContent = `当前 v${current} · 无法检查更新`;
+    el.updateHint.textContent = `更新服务不可达：${error.message}`;
+    el.openLatestBtn.hidden = true;
+  }
+}
+
 async function init() {
   const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   fillLanguages(settings.targetLang || 'zh-CN');
@@ -210,6 +246,7 @@ async function init() {
   await loadStatus();
   loadPageStatus();
   checkServer();
+  checkUpdate();
   setInterval(loadPageStatus, 2000);
 
   el.enabled.addEventListener('change', async () => {
@@ -245,6 +282,12 @@ async function init() {
   });
 
   el.checkServer.addEventListener('click', checkServer);
+
+  el.checkUpdateBtn.addEventListener('click', checkUpdate);
+
+  el.openLatestBtn.addEventListener('click', () => {
+    if (latestDownloadUrl) chrome.tabs.create({ url: latestDownloadUrl });
+  });
 
   el.pageTranslateBtn.addEventListener('click', async () => {
     el.pageTranslateBtn.disabled = true;

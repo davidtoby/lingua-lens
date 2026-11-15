@@ -26,6 +26,20 @@ const check = (name, ok, extra = '') => {
     args: [`--disable-extensions-except=${EXT_DIR}`, `--load-extension=${EXT_DIR}`, '--no-first-run', '--mute-audio'],
   });
   const sw = ctx.serviceWorkers()[0] || (await ctx.waitForEvent('serviceworker', { timeout: 15000 }));
+  // 测试固定连本地后端（通过扩展页写入 storage，SW 内的 chrome.* 在自动化环境下不可靠）
+  {
+    const anySw = ctx.serviceWorkers()[0] || (await ctx.waitForEvent('serviceworker', { timeout: 20000 }));
+    const extId = anySw.url().split('/')[2];
+    const setupPage = await ctx.newPage();
+    await setupPage.goto(`chrome-extension://${extId}/options.html`);
+    const applied = await setupPage.evaluate(async () => {
+      await chrome.storage.sync.set({ backendUrl: 'http://localhost:5050' });
+      const all = await chrome.storage.sync.get({ backendUrl: '' });
+      return all.backendUrl;
+    });
+    await setupPage.close();
+    if (applied !== 'http://localhost:5050') throw new Error('无法写入测试后端地址：' + applied);
+  }
   const tabIdOf = (fragment) =>
     sw.evaluate(async (frag) => {
       const tabs = await chrome.tabs.query({});

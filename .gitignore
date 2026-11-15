@@ -104,3 +104,6 @@ Desktop.ini
 .codegraph/
 .cozeproj/reduction
 .preview
+
+# 扩展签名私钥，勿入库
+.keys/

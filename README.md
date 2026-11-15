@@ -1,6 +1,10 @@
 # LinguaLens
 
-**A bilingual lens for the web.** A Chrome extension + self-hosted translation backend that turns YouTube videos into bilingual subtitles, exports bilingual SRT/VTT, and translates whole web pages in place.
+**A bilingual lens for the web.** A Chrome extension + hosted translation backend that turns YouTube videos into bilingual subtitles, exports bilingual SRT/VTT, and translates whole web pages in place.
+
+- **Hosted backend:** https://5tjjyhbf89.coze.site — install the extension and it just works, no local server, no API key.
+- **Self-hostable:** the same Next.js backend runs locally (`bash ./scripts/dev.sh`).
+- **Online updates:** the extension checks the backend for a newer release and links straight to the update.
 
 [中文说明](README.zh-CN.md)
 
@@ -51,7 +55,11 @@ If all four fail, the overlay says so and you can import a local subtitle file i
 
 ## Quick start
 
-### 1. Run the backend
+### 1. Use the hosted backend (default)
+
+Nothing to install. The extension ships with `https://5tjjyhbf89.coze.site` as its default backend, so it works on any network right after loading.
+
+### 1b. Or run your own backend
 
 ```bash
 bash ./scripts/prepare.sh   # install dependencies (first run only)
@@ -71,12 +79,28 @@ curl -s -X POST http://localhost:5050/api/translate \
 
 ### 2. Install the extension
 
-1. Unzip `public/lingualens-v2.0.0.zip` into a permanent folder.
+1. Unzip `public/lingualens-v2.1.0.zip` into a permanent folder.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and pick the unzipped folder (it must contain `manifest.json`).
 4. Open any YouTube video — the subtitle overlay appears on the player.
 
-Chrome will ask for permission to read data on all websites; that permission is what makes whole-page translation possible. All translation happens through your own backend.
+Chrome will ask for permission to read data on all websites; that permission is what makes whole-page translation possible. All translation goes through the backend (hosted by default, or your own).
+
+## Online updates
+
+| Path | What it is |
+| --- | --- |
+| Popup / options → **检查更新** | Compares the installed version with `GET /api/extension/latest` and shows the changelog + a download link |
+| `GET /updates.xml` | Chrome update manifest (`update_url` in `manifest.json`), pinned to extension id `megljaakikpaegbfnfdkphmpkapdonec` |
+| `GET /lingualens.crx` | Signed package (`scripts/pack-crx.sh`, key in `.keys/`, never committed) |
+
+How far the automation goes depends on how the extension was installed:
+
+- **`.crx` install / enterprise policy** — Chrome polls `updates.xml` and upgrades silently.
+- **Unpacked install** — Chrome never auto-updates unpacked extensions; use **检查更新**, then reload the new folder.
+- **Chrome Web Store** — the only way to get silent updates for ordinary users. The `public/lingualens-v2.1.0.zip` is store-ready (MV3, no remote code, no `default_locale`).
+
+Server-side changes (model, prompt, rate limits) need no client update at all — they ship with the backend.
 
 ## Usage
 
@@ -99,14 +123,18 @@ Chrome will ask for permission to read data on all websites; that permission is 
 | `GET` | `/api/health` | Status, model, languages, uptime |
 | `POST` | `/api/translate` | `{ texts: string[], targetLang?: string }` → `{ translations: string[] }` |
 | `GET` | `/api/youtube/timedtext` | Caption proxy: `?url=<timedtext url>` or `?v=<videoId>&lang=<code>` |
+| `GET` | `/api/extension/latest` | Latest extension version, zip/crx URLs, changelog |
+| `GET` | `/updates.xml` | Chrome extension update manifest |
 
 ## Tests
 
 ```bash
 pnpm ts-check && pnpm lint:build && pnpm lint:style
-node tests/e2e-extension.js   # 12 assertions: rendering, shortcuts, SRT/VTT export
+node tests/e2e-extension.js   # 14 assertions: rendering, shortcuts, SRT/VTT export, update check
 node tests/e2e-import.js      # 8 assertions: manual subtitle import path
 node tests/e2e-v2.js          # 16 assertions: drag & persist, whole-page translation, restore
+
+The E2E scripts pin `backendUrl` to the local dev server so they never depend on the hosted deployment.
 ```
 
 The E2E scripts drive a real Chromium with the extension loaded and fake pages (`tests/fixtures/`), so they don't depend on YouTube's anti-bot behaviour.
@@ -117,6 +145,7 @@ The E2E scripts drive a real Chromium with the extension loaded and fake pages (
 - Whole-page translation only covers text blocks (`p`, `li`, headings, table cells, quotes, captions). Canvas, images, and shadow-DOM widgets are skipped.
 - Long videos (500+ cues) take tens of seconds on first translation; cues appear progressively.
 - The translation cache is in-process, so it is cleared when the backend restarts.
+- Unpacked extensions cannot be auto-updated by Chrome; silent updates need the Web Store or a managed `.crx` install.
 
 ## License
 

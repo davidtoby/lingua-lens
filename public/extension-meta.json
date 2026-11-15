@@ -1,8 +1,15 @@
 {
   "name": "LinguaLens · 双语字幕与整页翻译",
-  "version": "2.0.0",
-  "file": "lingualens-v2.0.0.zip",
-  "size": 42187,
-  "sizeLabel": "41.2 KB",
-  "builtAt": "2026-11-15T00:06:45.163Z"
+  "version": "2.1.0",
+  "file": "lingualens-v2.1.0.zip",
+  "size": 44109,
+  "sizeLabel": "43.1 KB",
+  "crxFile": "lingualens.crx",
+  "crxSize": 44451,
+  "notes": [
+    "默认连接线上翻译服务，装好即用，无需本地启动",
+    "新增「检查更新」，可在弹窗和设置页查看线上版本",
+    "新增 .crx 安装包与自动更新通道"
+  ],
+  "builtAt": "2026-11-15T00:32:56.252Z"
 }

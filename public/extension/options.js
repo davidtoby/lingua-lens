@@ -3,7 +3,7 @@ const DEFAULT_SETTINGS = {
   autoTranslate: true,
   pageAutoTranslate: false,
   targetLang: 'zh-CN',
-  backendUrl: 'http://localhost:5050',
+  backendUrl: 'https://5tjjyhbf89.coze.site',
   showOriginal: true,
   hideNativeCaptions: true,
   fontSize: 20,
@@ -29,6 +29,20 @@ const LANG_LABELS = {
   vi: 'Tiếng Việt',
 };
 
+let latestDownloadUrl = '';
+
+function compareVersions(a, b) {
+  const pa = String(a || '0').split('.').map((n) => Number(n) || 0);
+  const pb = String(b || '0').split('.').map((n) => Number(n) || 0);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i += 1) {
+    const x = pa[i] || 0;
+    const y = pb[i] || 0;
+    if (x !== y) return x > y ? 1 : -1;
+  }
+  return 0;
+}
+
 const el = {
   backendUrl: document.getElementById('backendUrl'),
   testBackend: document.getElementById('testBackend'),
@@ -36,6 +50,11 @@ const el = {
   serverText: document.getElementById('serverText'),
   testText: document.getElementById('testText'),
   testTranslate: document.getElementById('testTranslate'),
+  updateDot: document.getElementById('updateDot'),
+  updateText: document.getElementById('updateText'),
+  updateHint: document.getElementById('updateHint'),
+  checkUpdateBtn: document.getElementById('checkUpdateBtn'),
+  openLatestBtn: document.getElementById('openLatestBtn'),
   testResult: document.getElementById('testResult'),
   targetLang: document.getElementById('targetLang'),
   fontSize: document.getElementById('fontSize'),
@@ -104,6 +123,38 @@ function currentSettings() {
     pageAutoTranslate: el.pageAutoTranslate.checked,
     enabled: el.enabled.checked,
   };
+}
+
+async function checkUpdate() {
+  const current = chrome.runtime.getManifest().version;
+  const backend = el.backendUrl.value.trim().replace(/\/+$/, '') || DEFAULT_SETTINGS.backendUrl;
+  el.updateText.textContent = `当前 v${current} · 检查中…`;
+  try {
+    const response = await fetch(`${backend}/api/extension/latest`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    const latest = payload.version || current;
+    const hasUpdate = compareVersions(latest, current) > 0;
+    if (hasUpdate) {
+      el.updateDot.className = 'dot warn';
+      el.updateText.textContent = `当前 v${current} · 线上 v${latest}`;
+      el.updateHint.textContent = (payload.notes && payload.notes.length
+        ? payload.notes.slice(0, 2).join(' · ')
+        : '线上已发布新版本，点「获取新版」下载');
+      latestDownloadUrl = payload.crxUrl || payload.zipUrl || '';
+      el.openLatestBtn.hidden = !latestDownloadUrl;
+    } else {
+      el.updateDot.className = 'dot ok';
+      el.updateText.textContent = `当前 v${current} · 已是最新`;
+      el.updateHint.textContent = '扩展会跟随线上版本；有新功能时会在这里提示。';
+      el.openLatestBtn.hidden = true;
+    }
+  } catch (error) {
+    el.updateDot.className = 'dot err';
+    el.updateText.textContent = `当前 v${current} · 无法检查更新`;
+    el.updateHint.textContent = `更新服务不可达：${error.message}`;
+    el.openLatestBtn.hidden = true;
+  }
 }
 
 async function checkBackend() {
@@ -175,6 +226,11 @@ el.resetPosBtn.addEventListener('click', async () => {
 el.saveBtn.addEventListener('click', save);
 el.resetBtn.addEventListener('click', reset);
 el.testBackend.addEventListener('click', checkBackend);
+el.checkUpdateBtn.addEventListener('click', checkUpdate);
+el.openLatestBtn.addEventListener('click', () => {
+  if (latestDownloadUrl) chrome.tabs.create({ url: latestDownloadUrl });
+});
 el.testTranslate.addEventListener('click', testTranslate);
 
 load();
+checkUpdate();
